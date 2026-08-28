@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fuel Tracker Pro - Controle de Combustível</title>
     
+    <!-- 1. PWA & iOS NATIVE META TAGS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FuelTracker">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3448/3448339.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3448/3448339.png">
+
     <!-- Dependências Locais ou CDN com suporte Fallback -->
     <script src="vendor/tailwind.js"></script>
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
@@ -42,7 +50,7 @@
             }
         }
     </script>
-<style>
+    <style>
         /* iOS Safe Area Adaptation */
         :root {
             --sat: env(safe-area-inset-top);
@@ -102,13 +110,20 @@
                 </div>
             </div>
             
-            <!-- Botões com texto visível -->
-            <div class="flex items-center gap-2">
-                <button onclick="exportToExcel()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600/20 text-emerald-400 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 shadow" title="Exportar Excel">
-                    <i class="fa-solid fa-file-excel"></i> <span>Excel</span>
+            <!-- Botões de Backup & Exportação -->
+            <div class="flex items-center gap-1.5">
+                <button onclick="exportJSON()" class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-purple-400 text-xs font-semibold border border-slate-700 transition flex items-center gap-1 shadow" title="Exportar Backup JSON">
+                    <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Backup</span>
                 </button>
-                <button onclick="exportToPDF()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-600/20 text-rose-400 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 shadow" title="Exportar PDF">
-                    <i class="fa-solid fa-file-pdf"></i> <span>PDF</span>
+                <label class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-semibold border border-slate-700 transition flex items-center gap-1 shadow cursor-pointer" title="Restaurar Backup JSON">
+                    <i class="fa-solid fa-upload"></i> <span class="hidden sm:inline">Restaurar</span>
+                    <input type="file" id="importJsonInput" accept=".json" onchange="importJSON(event)" class="hidden">
+                </label>
+                <button onclick="exportToExcel()" class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600/20 text-emerald-400 text-xs font-semibold border border-slate-700 transition flex items-center gap-1 shadow" title="Exportar Excel">
+                    <i class="fa-solid fa-file-excel"></i>
+                </button>
+                <button onclick="exportToPDF()" class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-600/20 text-rose-400 text-xs font-semibold border border-slate-700 transition flex items-center gap-1 shadow" title="Exportar PDF">
+                    <i class="fa-solid fa-file-pdf"></i>
                 </button>
             </div>
         </header>
@@ -127,6 +142,45 @@
             </div>
 
             <div id="viewDashboard" class="space-y-4">
+                
+                <!-- CALCULADORA DE DECISÃO NO POSTO -->
+                <div class="glass-card p-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xs font-bold uppercase text-amber-400 tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-calculator"></i> Decisão no Posto (Álcool vs Gasolina)
+                        </h2>
+                        <span class="text-[10px] text-slate-400">Regra dos 70%</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Preço Álcool (R$)</label>
+                            <input type="number" id="calcPrecoA" step="0.01" placeholder="Ex: 3.79" oninput="calcularDecisaoPosto()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-amber-400 mb-0.5">Preço Gasolina (R$)</label>
+                            <input type="number" id="calcPrecoG" step="0.01" placeholder="Ex: 5.89" oninput="calcularDecisaoPosto()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+                    <div id="resultadoCalcPosto" class="text-center p-2 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold text-slate-400">
+                        Insira os preços para comparar a vantagem.
+                    </div>
+                </div>
+
+                <!-- PREVISÃO DE PRÓXIMA REVISÃO -->
+                <div class="glass-card p-3.5 rounded-2xl border border-blue-500/30 flex items-center justify-between bg-blue-500/5">
+                    <div class="space-y-0.5">
+                        <div class="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1">
+                            <i class="fa-solid fa-wrench"></i> Próxima Revisão
+                        </div>
+                        <div class="text-sm font-black text-white" id="revisionForecast">Calculando...</div>
+                        <div class="text-[10px] text-slate-400" id="revisionSubtext">Baseado no ritmo de uso médio</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-blue-300 block" id="revisionKmTarget">10.000 km</span>
+                        <span class="text-[9px] text-slate-500 block">Intervalo de troca</span>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div class="glass-card p-3.5 rounded-2xl relative overflow-hidden border border-slate-700/50">
                         <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Km Total Rodado</div>
@@ -206,36 +260,36 @@
                     </div>
 
                     <form id="fuelForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
-    <input type="hidden" id="editIndex" value="-1">
+                        <input type="hidden" id="editIndex" value="-1">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-        <div class="flex flex-col min-w-0">
-            <label class="block text-[11px] font-medium text-slate-300 mb-1">Data</label>
-            <input type="date" id="inputData" required class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
-        </div>
-        <div class="flex flex-col min-w-0">
-            <label class="block text-[11px] font-medium text-slate-300 mb-1">Odômetro (Km)</label>
-            <input type="number" id="inputOdometro" step="1" required placeholder="Ex: 14600" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
-        </div>
-    </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div class="flex flex-col min-w-0">
+                                <label class="block text-[11px] font-medium text-slate-300 mb-1">Data</label>
+                                <input type="date" id="inputData" required class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <label class="block text-[11px] font-medium text-slate-300 mb-1">Odômetro (Km)</label>
+                                <input type="number" id="inputOdometro" step="1" required placeholder="Ex: 14600" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+                            </div>
+                        </div>
 
-    <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
-        <div class="min-w-0">
-            <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Litros Álcool</label>
-            <input type="number" id="inputLitrosA" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
-        </div>
-        <div class="min-w-0">
-            <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Preço/L Álcool (R$)</label>
-            <input type="number" id="inputPrecoA" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
-        </div>
-    </div>
+                        <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
+                            <div class="min-w-0">
+                                <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Litros Álcool</label>
+                                <input type="number" id="inputLitrosA" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div class="min-w-0">
+                                <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Preço/L Álcool (R$)</label>
+                                <input type="number" id="inputPrecoA" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
 
-    <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/20">
-        <div class="min-w-0">
-            <label class="block text-[10px] font-semibold text-amber-400 mb-0.5">Litros Gasolina</label>
-            <input type="number" id="inputLitrosG" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-amber-500">
-        </div>
-        <div class="min-w-0">
+                        <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/20">
+                            <div class="min-w-0">
+                                <label class="block text-[10px] font-semibold text-amber-400 mb-0.5">Litros Gasolina</label>
+                                <input type="number" id="inputLitrosG" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div class="min-w-0">
                                 <label class="block text-[10px] font-semibold text-amber-400 mb-0.5">Preço/L Gas (R$)</label>
                                 <input type="number" id="inputPrecoG" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-amber-500">
                             </div>
@@ -416,11 +470,116 @@
             loadRecords();
             recalculateMetricsAndRender();
             
-            // Auto-detect iOS Native Wrapper
             if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.exportHandler) {
                 document.body.classList.add('full-mode');
             }
         });
+
+        // 1. CALCULADORA DE DECISÃO NO POSTO
+        function calcularDecisaoPosto() {
+            const precoA = parseFloat(document.getElementById('calcPrecoA').value);
+            const precoG = parseFloat(document.getElementById('calcPrecoG').value);
+            const resEl = document.getElementById('resultadoCalcPosto');
+
+            if (!precoA || !precoG) {
+                resEl.className = "text-center p-2 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold text-slate-400";
+                resEl.innerHTML = "Insira os preços para comparar a vantagem.";
+                return;
+            }
+
+            const razio = (precoA / precoG) * 100;
+            const precoMaxA = precoG * 0.70;
+
+            if (razio <= 70) {
+                resEl.className = "text-center p-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs font-bold text-emerald-400";
+                resEl.innerHTML = `<i class="fa-solid fa-leaf text-emerald-400 mr-1"></i> Abasteça com ÁLCOOL! (${razio.toFixed(1)}% do preço da gasolina)`;
+            } else {
+                resEl.className = "text-center p-2 rounded-xl bg-amber-950/80 border border-amber-500/40 text-xs font-bold text-amber-400";
+                resEl.innerHTML = `<i class="fa-solid fa-fire text-amber-400 mr-1"></i> Abasteça com GASOLINA! (Álcool vale a pena até R$ ${precoMaxA.toFixed(2)})`;
+            }
+        }
+
+        // 2. BACKUP E RESTAURAÇÃO DE DADOS (JSON)
+        function exportJSON() {
+            if (records.length === 0) {
+                alert('Não há dados para exportar.');
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `FuelTracker_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('Backup JSON exportado!', 'fa-download', 'text-purple-400');
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        records = importedData;
+                        saveRecords();
+                        recalculateMetricsAndRender();
+                        showToast('Dados importados com sucesso!', 'fa-circle-check', 'text-emerald-400');
+                    } else {
+                        alert('O arquivo JSON não está no formato correto.');
+                    }
+                } catch (err) {
+                    alert('Erro ao ler o arquivo JSON.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 4. PREVISÃO DA PRÓXIMA REVISÃO
+        function renderRevisionForecast() {
+            const forecastEl = document.getElementById('revisionForecast');
+            const subtextEl = document.getElementById('revisionSubtext');
+            const targetEl = document.getElementById('revisionKmTarget');
+
+            if (!forecastEl || !subtextEl || !targetEl) return;
+
+            if (!records || records.length < 2) {
+                forecastEl.innerText = "Dados insuficientes";
+                subtextEl.innerText = "Cadastre pelo menos 2 abastecimentos";
+                return;
+            }
+
+            const sorted = [...records].sort((a, b) => Number(a.odo) - Number(b.odo));
+            const minOdo = Number(sorted[0].odo);
+            const maxOdo = Number(sorted[sorted.length - 1].odo);
+            
+            const revisionInterval = 10000;
+            const nextRevisionKm = Math.ceil((maxOdo + 1) / revisionInterval) * revisionInterval;
+            const kmRemaining = nextRevisionKm - maxOdo;
+
+            const firstDate = new Date(sorted[0].date);
+            const lastDate = new Date(sorted[sorted.length - 1].date);
+            const daysDiff = Math.max(1, (lastDate - firstDate) / (1000 * 60 * 60 * 24));
+            
+            const kmPerDay = (maxOdo - minOdo) / daysDiff;
+            const estimatedDaysLeft = kmPerDay > 0 ? Math.round(kmRemaining / kmPerDay) : 0;
+
+            const estimatedDate = new Date();
+            estimatedDate.setDate(estimatedDate.getDate() + estimatedDaysLeft);
+
+            targetEl.innerText = `${nextRevisionKm.toLocaleString('pt-BR')} km`;
+            
+            if (estimatedDaysLeft > 0) {
+                forecastEl.innerText = `Faltam ${kmRemaining.toLocaleString('pt-BR')} km (~${formatDateBR(estimatedDate.toISOString().split('T')[0])})`;
+                subtextEl.innerText = `Média de ${(kmPerDay * 30).toFixed(0)} km/mês rodados`;
+            } else {
+                forecastEl.innerText = `Revisão Pendente!`;
+                subtextEl.innerText = `Odômetro atingiu a marca de revisão`;
+            }
+        }
 
         function loadRecords() {
             const stored = localStorage.getItem('fuel_tracker_records');
@@ -497,6 +656,7 @@
             renderHistoryList();
             renderCharts();
             renderInsights();
+            renderRevisionForecast();
         }
 
         function setKmlFilterCriterion(criterion) {
