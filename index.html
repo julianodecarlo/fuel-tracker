@@ -110,25 +110,7 @@
                 </div>
             </div>
             
-           <!-- Botões de Backup & Exportação -->
-<div class="flex items-center gap-2">
-    <button onclick="exportJSON()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-purple-400 border border-slate-700 transition flex items-center justify-center shadow" title="Exportar Backup JSON">
-        <i class="fa-solid fa-download text-xs"></i>
-    </button>
-
-    <label class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 transition flex items-center justify-center shadow cursor-pointer" title="Restaurar Backup JSON">
-        <i class="fa-solid fa-upload text-xs"></i>
-        <input type="file" id="importJsonInput" accept=".json" onchange="importJSON(event)" class="hidden">
-    </label>
-
-    <button onclick="exportToExcel()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-emerald-600/20 text-emerald-400 border border-slate-700 transition flex items-center justify-center shadow" title="Exportar Excel">
-        <i class="fa-solid fa-file-excel text-xs"></i>
-    </button>
-
-    <button onclick="exportToPDF()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600/20 text-rose-400 border border-slate-700 transition flex items-center justify-center shadow" title="Exportar PDF">
-        <i class="fa-solid fa-file-pdf text-xs"></i>
-    </button>
-</div>
+          
         </header>
 
         <main class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
