@@ -206,36 +206,36 @@
                     </div>
 
                     <form id="fuelForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
-                        <input type="hidden" id="editIndex" value="-1">
+    <input type="hidden" id="editIndex" value="-1">
 
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-300 mb-1">Data</label>
-                                <input type="date" id="inputData" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-300 mb-1">Odômetro (Km)</label>
-                                <input type="number" id="inputOdometro" step="1" required placeholder="Ex: 14600" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
-                            </div>
-                        </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div class="flex flex-col min-w-0">
+            <label class="block text-[11px] font-medium text-slate-300 mb-1">Data</label>
+            <input type="date" id="inputData" required class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+        </div>
+        <div class="flex flex-col min-w-0">
+            <label class="block text-[11px] font-medium text-slate-300 mb-1">Odômetro (Km)</label>
+            <input type="number" id="inputOdometro" step="1" required placeholder="Ex: 14600" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+        </div>
+    </div>
 
-                        <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
-                            <div>
-                                <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Litros Álcool</label>
-                                <input type="number" id="inputLitrosA" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Preço/L Álcool (R$)</label>
-                                <input type="number" id="inputPrecoA" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
-                            </div>
-                        </div>
+    <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
+        <div class="min-w-0">
+            <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Litros Álcool</label>
+            <input type="number" id="inputLitrosA" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <div class="min-w-0">
+            <label class="block text-[10px] font-semibold text-emerald-400 mb-0.5">Preço/L Álcool (R$)</label>
+            <input type="number" id="inputPrecoA" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+    </div>
 
-                        <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/20">
-                            <div>
-                                <label class="block text-[10px] font-semibold text-amber-400 mb-0.5">Litros Gasolina</label>
-                                <input type="number" id="inputLitrosG" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-amber-500">
-                            </div>
-                            <div>
+    <div class="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/20">
+        <div class="min-w-0">
+            <label class="block text-[10px] font-semibold text-amber-400 mb-0.5">Litros Gasolina</label>
+            <input type="number" id="inputLitrosG" step="0.01" min="0" placeholder="0.00" class="w-full min-w-0 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-amber-500">
+        </div>
+        <div class="min-w-0">
                                 <label class="block text-[10px] font-semibold text-amber-400 mb-0.5">Preço/L Gas (R$)</label>
                                 <input type="number" id="inputPrecoG" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-amber-500">
                             </div>
