@@ -490,15 +490,38 @@
             }
         }
 
-        function exportJSON() {
+        async function exportJSON() {
             if (records.length === 0) {
                 alert('Não há dados para exportar.');
                 return;
             }
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
+
+            const fileName = `FuelTracker_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            const jsonStr = JSON.stringify(records, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+
+            // Utiliza o Web Share API para abrir a folha nativa no Safari iOS (permite salvar em Arquivos)
+            if (navigator.canShare && navigator.share) {
+                try {
+                    const file = new File([blob], fileName, { type: 'application/json' });
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Backup FuelTracker',
+                            text: 'Backup de dados do FuelTracker'
+                        });
+                        showToast('Backup JSON exportado!', 'fa-download', 'text-purple-400');
+                        return;
+                    }
+                } catch (err) {
+                    if (err.name === 'AbortError') return; // Usuário cancelou
+                }
+            }
+
+            // Fallback tradicional para outros navegadores
             const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `FuelTracker_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            downloadAnchor.setAttribute("href", URL.createObjectURL(blob));
+            downloadAnchor.setAttribute("download", fileName);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
