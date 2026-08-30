@@ -28,6 +28,7 @@
         if (!window.XLSX) document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');
         if (!window.jspdf) document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>');
     </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
         tailwind = window.tailwind || {};
@@ -51,7 +52,6 @@
         }
     </script>
     <style>
-        /* iOS Safe Area Adaptation */
         :root {
             --sat: env(safe-area-inset-top);
             --sab: env(safe-area-inset-bottom);
@@ -64,7 +64,6 @@
             -webkit-touch-callout: none;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -77,7 +76,6 @@
             border-radius: 3px;
         }
 
-        /* Adaptado para visual nativo de tela cheia no iOS */
         .iphone-frame {
             width: 100%;
             min-height: 100vh;
@@ -96,7 +94,6 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center font-sans antialiased">
 
-    <!-- Container do App sem molduras de simulação -->
     <div id="deviceFrame" class="iphone-frame bg-slate-900 w-full flex flex-col justify-between overflow-hidden">
         
         <header class="pt-10 px-4 pb-3 bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-30 flex items-center justify-between">
@@ -109,13 +106,13 @@
                     <p class="text-[10px] text-slate-400 font-medium">Gestão Inteligente & Métricas</p>
                 </div>
             </div>
-            <!-- Menu Dropdown de Configurações / Ações -->
+            
+            <!-- Botão com Ícone de Engrenagem e Menu Suspenso -->
             <div class="relative">
-                <button onclick="toggleSettingsMenu()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 flex items-center justify-center transition shadow focus:outline-none" title="Opções e Exportação">
-                    <i class="fa-solid fa-gear text-sm"></i>
+                <button onclick="toggleSettingsMenu()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 flex items-center justify-center transition shadow focus:outline-none" title="Opções e Configurações">
+                    <i class="fa-solid fa-gear text-base"></i>
                 </button>
 
-                <!-- Menu Suspenso (Escondido por padrão) -->
                 <div id="settingsDropdown" class="hidden absolute right-0 mt-2 w-52 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl py-2 z-50 backdrop-blur-lg">
                     <button onclick="exportJSON(); toggleSettingsMenu();" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-purple-400 hover:bg-slate-700/60 flex items-center gap-2.5 transition">
                         <i class="fa-solid fa-download w-4"></i> Exportar JSON
@@ -134,15 +131,15 @@
                     </button>
                     <hr class="border-slate-700/60 my-1">
 
-                    <button onclick="resetToInitialData(); toggleSettingsMenu();" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-amber-400 hover:bg-slate-700/60 flex items-center gap-2.5 transition">
-                        <i class="fa-solid fa-rotate-right w-4"></i> Resetar Banco de Dados
+                    <!-- Ação de Reset Total para Novo Usuário -->
+                    <button onclick="resetDatabase(); toggleSettingsMenu();" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-red-400 hover:bg-slate-700/60 flex items-center gap-2.5 transition">
+                        <i class="fa-solid fa-trash-arrow-up w-4"></i> Zerar Banco de Dados
                     </button>
                 </div>
             </div>
         </header>
 
         <main class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-            <!-- NAVEGAÇÃO DE ABAS (4 ABAS) -->
             <div class="grid grid-cols-4 gap-1 bg-slate-800/80 p-1 rounded-xl text-[11px] font-semibold border border-slate-700/60">
                 <button id="tabDashboard" onclick="switchTab('dashboard')" class="py-2 rounded-lg bg-emerald-500 text-slate-950 shadow transition flex items-center justify-center gap-1">
                     <i class="fa-solid fa-chart-pie"></i> Resumo
@@ -159,8 +156,6 @@
             </div>
 
             <div id="viewDashboard" class="space-y-4">
-                
-                <!-- CALCULADORA DE DECISÃO NO POSTO -->
                 <div class="glass-card p-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 space-y-3">
                     <div class="flex items-center justify-between">
                         <h2 class="text-xs font-bold uppercase text-amber-400 tracking-wider flex items-center gap-1.5">
@@ -377,7 +372,6 @@
                 </div>
             </div>
 
-            <!-- NOVA ABA: REVISÃO DO VEÍCULO -->
             <div id="viewRevision" class="space-y-4 hidden">
                 <div class="glass-card p-5 rounded-2xl border border-blue-500/30 bg-blue-500/5 space-y-4">
                     <div class="flex items-center justify-between border-b border-blue-500/20 pb-3">
@@ -423,7 +417,6 @@
     </div>
 
     <script>
-        // Alterna a exibição do menu suspenso
         function toggleSettingsMenu() {
             const dropdown = document.getElementById('settingsDropdown');
             if (dropdown) {
@@ -431,7 +424,6 @@
             }
         }
 
-        // Fecha o menu suspenso caso o usuário clique fora dele na tela
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('settingsDropdown');
             const gearBtn = event.target.closest('button[onclick*="toggleSettingsMenu"]');
@@ -442,69 +434,6 @@
 
         const KML_MIN = 5.0;
         const KML_MAX = 17.0;
-
-        const rawPremisesData = [
-            { date: '2025-08-01', full: false, odo: 6,   pA: 4.05, lA: 24.69, pG: 0, lG: 0 },
-            { date: '2025-08-07', full: false, odo: 157, pA: 4.05, lA: 24.69, pG: 0, lG: 0 },
-            { date: '2025-08-12', full: false, odo: 308, pA: 4.29, lA: 11.66, pG: 0, lG: 0 },
-            { date: '2025-08-15', full: false, odo: 396, pA: 3.97, lA: 25.19, pG: 0, lG: 0 },
-            { date: '2025-08-21', full: true,  odo: 534, pA: 3.99, lA: 36.67, pG: 0, lG: 0 },
-            { date: '2025-09-01', full: false, odo: 809, pA: 0,    lA: 0,     pG: 6.25, lG: 8.00 },
-            { date: '2025-09-03', full: true,  odo: 875, pA: 0,    lA: 0,     pG: 5.95, lG: 38.07 },
-            { date: '2025-09-11', full: true,  odo: 1088,pA: 0,    lA: 0,     pG: 6.05, lG: 28.25 },
-            { date: '2025-09-15', full: true,  odo: 1592,pA: 0,    lA: 0,     pG: 6.09, lG: 31.69 },
-            { date: '2025-09-29', full: true,  odo: 1944,pA: 0,    lA: 0,     pG: 6.19, lG: 40.91 },
-            { date: '2025-10-01', full: true,  odo: 2442,pA: 0,    lA: 0,     pG: 6.09, lG: 35.11 },
-            { date: '2025-10-03', full: true,  odo: 2513,pA: 0,    lA: 0,     pG: 6.39, lG: 7.16 },
-            { date: '2025-10-05', full: true,  odo: 2922,pA: 0,    lA: 0,     pG: 6.14, lG: 32.54 },
-            { date: '2025-10-09', full: true,  odo: 3335,pA: 0,    lA: 0,     pG: 6.09, lG: 31.76 },
-            { date: '2025-10-22', full: true,  odo: 3755,pA: 0,    lA: 0,     pG: 5.99, lG: 37.65 },
-            { date: '2025-10-25', full: false, odo: 4249,pA: 0,    lA: 0,     pG: 5.90, lG: 16.95 },
-            { date: '2025-10-26', full: true,  odo: 4454,pA: 0,    lA: 0,     pG: 5.67, lG: 36.65 },
-            { date: '2025-10-30', full: true,  odo: 4753,pA: 0,    lA: 0,     pG: 6.05, lG: 24.05 },
-            { date: '2025-11-13', full: true,  odo: 5100,pA: 4.19, lA: 34.49, pG: 0,    lG: 0 },
-            { date: '2025-11-16', full: true,  odo: 5366,pA: 4.09, lA: 29.85, pG: 0,    lG: 0 },
-            { date: '2025-11-25', full: true,  odo: 5812,pA: 4.39, lA: 42.01, pG: 0,    lG: 0 },
-            { date: '2025-12-04', full: true,  odo: 6073,pA: 4.29, lA: 36.44, pG: 0,    lG: 0 },
-            { date: '2025-12-11', full: true,  odo: 6267,pA: 4.29, lA: 27.42, pG: 0,    lG: 0 },
-            { date: '2025-12-18', full: true,  odo: 6479,pA: 4.29, lA: 31.47, pG: 0,    lG: 0 },
-            { date: '2025-12-23', full: true,  odo: 6593,pA: 6.09, lA: 16.48, pG: 0,    lG: 0 },
-            { date: '2025-12-24', full: true,  odo: 6928,pA: 3.87, lA: 30.59, pG: 0,    lG: 0 },
-            { date: '2025-12-31', full: false, odo: 7120,pA: 4.59, lA: 21.78, pG: 0,    lG: 0 },
-            { date: '2026-01-08', full: true,  odo: 7491,pA: 4.29, lA: 41.93, pG: 0,    lG: 0 },
-            { date: '2026-01-15', full: true,  odo: 7677,pA: 0,    lA: 0,     pG: 6.19, lG: 24.42 },
-            { date: '2026-01-22', full: true,  odo: 7872,pA: 0,    lA: 0,     pG: 6.19, lG: 21.59 },
-            { date: '2026-01-29', full: true,  odo: 8053,pA: 0,    lA: 0,     pG: 6.19, lG: 19.90 },
-            { date: '2026-02-05', full: true,  odo: 8203,pA: 0,    lA: 0,     pG: 6.19, lG: 14.92 },
-            { date: '2026-02-12', full: true,  odo: 8379,pA: 0,    lA: 0,     pG: 6.19, lG: 17.51 },
-            { date: '2026-02-19', full: true,  odo: 8491,pA: 0,    lA: 0,     pG: 6.19, lG: 13.32 },
-            { date: '2026-02-26', full: true,  odo: 8641,pA: 0,    lA: 0,     pG: 6.19, lG: 15.20 },
-            { date: '2026-03-05', full: true,  odo: 8813,pA: 0,    lA: 0,     pG: 6.19, lG: 17.66 },
-            { date: '2026-03-12', full: true,  odo: 9023,pA: 0,    lA: 0,     pG: 6.29, lG: 21.15 },
-            { date: '2026-03-20', full: true,  odo: 9205,pA: 0,    lA: 0,     pG: 6.28, lG: 18.79 },
-            { date: '2026-03-26', full: true,  odo: 9378,pA: 0,    lA: 0,     pG: 6.49, lG: 16.85 },
-            { date: '2026-04-09', full: true,  odo: 9649,pA: 0,    lA: 0,     pG: 6.55, lG: 29.60 },
-            { date: '2026-04-14', full: false, odo: 10092,pA: 0,   lA: 0,     pG: 6.39, lG: 7.82 },
-            { date: '2026-04-15', full: false, odo: 10274,pA: 0,   lA: 0,     pG: 6.49, lG: 15.41 },
-            { date: '2026-04-18', full: true,  odo: 10514,pA: 0,   lA: 0,     pG: 6.29, lG: 36.01 },
-            { date: '2026-04-30', full: true,  odo: 10805,pA: 4.19,lA: 28.82, pG: 0,    lG: 0 },
-            { date: '2026-05-07', full: true,  odo: 10977,pA: 3.99,lA: 19.28, pG: 0,    lG: 0 },
-            { date: '2026-05-10', full: true,  odo: 11356,pA: 3.59,lA: 33.64, pG: 0,    lG: 0 },
-            { date: '2026-05-14', full: true,  odo: 11739,pA: 3.99,lA: 40.71, pG: 0,    lG: 0 },
-            { date: '2026-05-21', full: true,  odo: 11914,pA: 3.79,lA: 21.93, pG: 0,    lG: 0 },
-            { date: '2026-05-28', full: true,  odo: 12099,pA: 3.79,lA: 23.75, pG: 0,    lG: 0 },
-            { date: '2026-06-11', full: true,  odo: 12418,pA: 3.79,lA: 42.35, pG: 0,    lG: 0 },
-            { date: '2026-06-18', full: true,  odo: 12593,pA: 3.79,lA: 22.17, pG: 0,    lG: 0 },
-            { date: '2026-06-25', full: true,  odo: 12765,pA: 3.79,lA: 22.44, pG: 0,    lG: 0 },
-            { date: '2026-07-08', full: true,  odo: 13014,pA: 3.99,lA: 27.65, pG: 0,    lG: 0 },
-            { date: '2026-07-16', full: true,  odo: 13151,pA: 3.79,lA: 18.48, pG: 0,    lG: 0 },
-            { date: '2026-07-23', full: true,  odo: 13326,pA: 3.79,lA: 11.29, pG: 6.29, lG: 10.00 },
-            { date: '2026-07-30', full: true,  odo: 13520,pA: 3.69,lA: 18.60, pG: 6.19, lG: 5.00 },
-            { date: '2026-08-03', full: true,  odo: 13749,pA: 3.89,lA: 16.92, pG: 6.39, lG: 5.00 },
-            { date: '2026-08-13', full: true,  odo: 14073,pA: 3.69,lA: 29.54, pG: 6.19, lG: 8.08 },
-            { date: '2026-08-20', full: true,  odo: 14256,pA: 3.79,lA: 12.76, pG: 6.38, lG: 7.84 },
-            { date: '2026-08-27', full: true,  odo: 14439,pA: 3.79,lA: 13.88, pG: 6.38, lG: 7.05 }
-        ];
 
         let records = [];
         let currentAvgMode = 'all';
@@ -518,13 +447,8 @@
             if (inputData) inputData.value = new Date().toISOString().split('T')[0];
             loadRecords();
             recalculateMetricsAndRender();
-            
-            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.exportHandler) {
-                document.body.classList.add('full-mode');
-            }
         });
 
-        // FUNÇÃO DE CÁLCULO DO FATOR DINÂMICO
         function getFatorRendimentoDinamico() {
             const validA = records.filter(r => r.full && r.comb === 'A' && r.kml >= KML_MIN && r.kml <= KML_MAX);
             const validG = records.filter(r => r.full && r.comb === 'G' && r.kml >= KML_MIN && r.kml <= KML_MAX);
@@ -535,7 +459,6 @@
             return avgKmlA / avgKmlG;
         }
 
-        // 1. CALCULADORA DE DECISÃO NO POSTO (COM FATOR DINÂMICO DA ANÁLISE)
         function calcularDecisaoPosto() {
             const precoA = parseFloat(document.getElementById('calcPrecoA').value);
             const precoG = parseFloat(document.getElementById('calcPrecoG').value);
@@ -567,7 +490,6 @@
             }
         }
 
-        // 2. BACKUP E RESTAURAÇÃO DE DADOS (JSON)
         function exportJSON() {
             if (records.length === 0) {
                 alert('Não há dados para exportar.');
@@ -606,7 +528,6 @@
             reader.readAsText(file);
         }
 
-        // 4. PREVISÃO DA PRÓXIMA REVISÃO
         function renderRevisionForecast() {
             const forecastEl = document.getElementById('revisionForecast');
             const subtextEl = document.getElementById('revisionSubtext');
@@ -661,25 +582,27 @@
                 try {
                     records = JSON.parse(stored);
                 } catch(e) {
-                    records = JSON.parse(JSON.stringify(rawPremisesData));
+                    records = [];
                 }
             } else {
-                records = JSON.parse(JSON.stringify(rawPremisesData));
+                records = [];
             }
         }
 
         function saveRecords() {
             localStorage.setItem('fuel_tracker_records', JSON.stringify(records));
             const statusEl = document.getElementById('storageStatus');
-            if (statusEl) statusEl.innerText = 'Base Local Atualizada';
+            if (statusEl) statusEl.innerText = records.length > 0 ? 'Base Local Atualizada' : 'Base de Dados Vazia';
         }
 
-        function resetToInitialData() {
-            if (confirm('Tem certeza que deseja restaurar os dados iniciais? Todos os dados customizados serão sobrescritos.')) {
-                records = JSON.parse(JSON.stringify(rawPremisesData));
+        // LÓGICA DE RESET COMPLETO DO BANCO DE DADOS
+        function resetDatabase() {
+            if (confirm('Atenção: Esta ação apagará permanentemente TODO o histórico de abastecimentos para que um novo usuário possa iniciar. Deseja continuar?')) {
+                localStorage.removeItem('fuel_tracker_records');
+                records = [];
                 saveRecords();
                 recalculateMetricsAndRender();
-                showToast('Banco de dados resetado!', 'fa-rotate-right', 'text-amber-400');
+                showToast('Banco de dados zerado com sucesso!', 'fa-trash-arrow-up', 'text-emerald-400');
             }
         }
 
@@ -752,7 +675,13 @@
         }
 
         function renderKPIs() {
-            if (records.length === 0) return;
+            if (records.length === 0) {
+                document.getElementById('kpiTotalKm').innerText = `0 km`;
+                document.getElementById('kpiOdometro').innerText = `Odômetro: 0 km`;
+                document.getElementById('kpiGastoTotal').innerText = `R$ 0,00`;
+                document.getElementById('kpiCustoMedio').innerText = `Custo/km: R$ 0,00`;
+                return;
+            }
             const maxOdo = Math.max(...records.map(r => Number(r.odo)));
             const minOdo = Math.min(...records.map(r => Number(r.odo)));
             const totalKmDriven = maxOdo - minOdo;
@@ -819,6 +748,10 @@
             const listEl = document.getElementById('recentRecordsList');
             if (!listEl) return;
             listEl.innerHTML = '';
+            if (records.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs">Nenhum abastecimento recente.</div>`;
+                return;
+            }
             [...records].reverse().slice(0, 3).forEach((rec) => {
                 listEl.appendChild(createRecordCard(rec));
             });
@@ -1107,6 +1040,10 @@
 
             const insightEl = document.getElementById('insightText');
             if (insightEl) {
+                if (records.length === 0) {
+                    insightEl.innerHTML = `Cadastre os seus abastecimentos para gerar insights personalizados sobre a economia do seu veículo.`;
+                    return;
+                }
                 insightEl.innerHTML = `
                     Sua média válida com <strong class="text-emerald-400">Álcool</strong> é de <strong>${avgKmlA.toFixed(2)} km/L</strong> e com <strong class="text-amber-400">Gasolina</strong> é de <strong>${avgKmlG.toFixed(2)} km/L</strong>.<br><br>
                     O rendimento do Álcool no seu veículo representa <strong>${ratio.toFixed(1)}%</strong> do rendimento da Gasolina. Recomendamos abastecer com Álcool sempre que o preço do litro for inferior a <strong>${ratio.toFixed(1)}%</strong> do preço da gasolina na sua região!
@@ -1115,7 +1052,10 @@
         }
 
         function exportToExcel() {
-            if (!window.XLSX) return;
+            if (!window.XLSX || records.length === 0) {
+                alert('Sem registros para exportar.');
+                return;
+            }
             const exportData = records.map(r => ({
                 'Data': formatDateBR(r.date),
                 'Tanque Cheio': r.full ? 'Sim' : 'Não',
@@ -1144,7 +1084,10 @@
         }
 
         function exportToPDF() {
-            if (!window.jspdf) return;
+            if (!window.jspdf || records.length === 0) {
+                alert('Sem registros para exportar.');
+                return;
+            }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'pt', 'a4');
 
