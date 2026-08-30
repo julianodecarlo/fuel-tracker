@@ -116,7 +116,7 @@
                 </button>
 
                 <!-- Menu Suspenso (Escondido por padrão) -->
-                <div id="settingsDropdown" class="hidden absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl py-2 z-50 backdrop-blur-lg">
+                <div id="settingsDropdown" class="hidden absolute right-0 mt-2 w-52 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl py-2 z-50 backdrop-blur-lg">
                     <button onclick="exportJSON(); toggleSettingsMenu();" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-purple-400 hover:bg-slate-700/60 flex items-center gap-2.5 transition">
                         <i class="fa-solid fa-download w-4"></i> Exportar JSON
                     </button>
@@ -131,6 +131,11 @@
                     </button>
                     <button onclick="exportToPDF(); toggleSettingsMenu();" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-rose-400 hover:bg-slate-700/60 flex items-center gap-2.5 transition">
                         <i class="fa-solid fa-file-pdf w-4"></i> Exportar PDF
+                    </button>
+                    <hr class="border-slate-700/60 my-1">
+
+                    <button onclick="resetToInitialData(); toggleSettingsMenu();" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-amber-400 hover:bg-slate-700/60 flex items-center gap-2.5 transition">
+                        <i class="fa-solid fa-rotate-right w-4"></i> Resetar Banco de Dados
                     </button>
                 </div>
             </div>
@@ -670,11 +675,11 @@
         }
 
         function resetToInitialData() {
-            if (confirm('Tem certeza que deseja restaurar os dados iniciais?')) {
+            if (confirm('Tem certeza que deseja restaurar os dados iniciais? Todos os dados customizados serão sobrescritos.')) {
                 records = JSON.parse(JSON.stringify(rawPremisesData));
                 saveRecords();
                 recalculateMetricsAndRender();
-                showToast('Dados originais restaurados!', 'fa-rotate-right', 'text-amber-400');
+                showToast('Banco de dados resetado!', 'fa-rotate-right', 'text-amber-400');
             }
         }
 
