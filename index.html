@@ -240,7 +240,7 @@
                             Tanque Cheio
                         </button>
                         <button id="filterRangeOnly" onclick="setKmlFilterCriterion('range')" class="py-1 rounded-lg text-slate-400 font-semibold transition">
-                            Faixa (5-17)
+                            Faixa (5-23)
                         </button>
                         <button id="filterBoth" onclick="setKmlFilterCriterion('both')" class="py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold transition shadow">
                             Ambos
@@ -437,7 +437,7 @@
                 <span id="storagePulse" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="storageStatus">Base Local Ativa</span>
             </span>
-            <span id="appVersionFooter" class="font-mono text-[10px] text-slate-500">v1.2 • iOS Native Ready</span>
+            <span id="appVersionFooter" class="font-mono text-[10px] text-slate-500">v1.2</span>
         </footer>
     </div>
 
@@ -491,7 +491,7 @@
         const STORAGE_KEY = IS_LITE_VERSION ? 'fuel_tracker_lite_records' : 'fuel_tracker_records';
 
         const KML_MIN = 5.0;
-        const KML_MAX = 17.0;
+        const KML_MAX = 23.0;
 
         let records = [];
         let currentAvgMode = 'all';
