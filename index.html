@@ -125,6 +125,12 @@
                     </button>
 
                     <div id="settingsDropdown" class="hidden absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl py-2 z-50 backdrop-blur-lg">
+                        <button onclick="openManualModal(); toggleSettingsMenu();" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-amber-400 hover:bg-slate-700/60 flex items-center justify-between transition">
+                            <span class="flex items-center gap-2.5"><i class="fa-solid fa-book-open w-4"></i> Manual do Usuário</span>
+                        </button>
+
+                        <hr class="border-slate-700/60 my-1">
+
                         <button onclick="handleExportJSON()" class="w-full px-4 py-2.5 text-left text-xs font-semibold text-purple-400 hover:bg-slate-700/60 flex items-center justify-between transition">
                             <span class="flex items-center gap-2.5"><i class="fa-solid fa-download w-4"></i> Exportar JSON</span>
                             <i id="lockIconExportJSON" class="fa-solid fa-lock text-[10px] text-amber-400 hidden"></i>
@@ -441,6 +447,118 @@
         </footer>
     </div>
 
+    <!-- MODAL DO MANUAL DO USUÁRIO -->
+    <div id="manualModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-lg max-h-[85vh] rounded-3xl p-6 shadow-2xl relative flex flex-col space-y-4">
+            <button onclick="closeManualModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl font-black">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Manual do Usuário</h3>
+                    <p class="text-xs text-slate-400">Fuel Tracker — Guia de Uso</p>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto space-y-4 text-xs text-slate-300 pr-1 leading-relaxed">
+                <p class="text-slate-400">O Fuel Tracker é uma aplicação focada na gestão inteligente de abastecimentos, métricas de consumo e acompanhamento de manutenção preventiva do seu veículo.</p>
+                
+                <div class="space-y-1.5">
+                    <h4 class="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders"></i> 1. Recursos e Modos de Operação
+                    </h4>
+                    <ul class="list-disc list-inside space-y-1 pl-1 text-slate-300">
+                        <li><strong class="text-emerald-400">Versão PRO:</strong> Acesso ilimitado a todos os registros, backups em formato JSON, exportação de relatórios em Excel/PDF e limpeza do banco de dados.</li>
+                        <li><strong class="text-amber-400">Versão LITE:</strong> Versão demonstrativa limitada a até 5 registros de abastecimento e com restrições de exportação/restauração de dados.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-1.5">
+                    <h4 class="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-calculator"></i> 2. Decisão no Posto (Calculadora Álcool vs. Gasolina)
+                    </h4>
+                    <p>Localizada no painel principal, esta ferramenta calcula instantaneamente qual combustível oferece maior vantagem financeira para o seu momento de abastecimento.</p>
+                    <ul class="list-disc list-inside space-y-1 pl-1 text-slate-300">
+                        <li><strong>Na prática:</strong> Ao encostar o carro no posto, abra a aba Resumo e digite nos campos indicados o preço atual do litro do Álcool e da Gasolina.</li>
+                        <li><strong>Ajuste Inteligente (Perfil do Usuário):</strong> Diferente de calculadoras comuns que usam uma proporção genérica de 70%, o aplicativo calcula a eficiência real do seu motor. Ele compara a média que o seu veículo faz com álcool contra a média com gasolina. Conforme você registra abastecimentos com tanque cheio, o app recalcula essa proporção e ajusta o "Fator" dinamicamente. Quanto mais você usa o aplicativo, mais precisa e personalizada fica a indicação.</li>
+                        <li><strong>O Resultado:</strong> O sistema exibe na hora qual opção é mais vantajosa e indica o preço limite recomendado para o álcool (ex: "Álcool vale a pena até R$ 3,85").</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-1.5">
+                    <h4 class="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-compass"></i> 3. Navegação pelas Abas
+                    </h4>
+                    <p>O aplicativo divide suas funções em 4 telas acessíveis pelo menu superior:</p>
+                    
+                    <div class="space-y-2 pl-2 border-l border-slate-800">
+                        <div>
+                            <strong class="text-white block">Resumo (Dashboard)</strong>
+                            <ul class="list-disc list-inside space-y-1 pl-1">
+                                <li><strong>Indicadores Principais (KPIs):</strong> Exibe a quilometragem total percorrida, odômetro atual, gasto financeiro acumulado e custo médio por quilômetro (R$/km).</li>
+                                <li><strong>Médias de Consumo (km/L):</strong> Apresenta o consumo médio separado por tipo de combustível (Álcool, Gasolina e Misto).</li>
+                                <li><strong>Filtros de Modo:</strong> Permite alternar a média entre o histórico Geral ou os Últimos 5 Abastecimentos.</li>
+                                <li><strong>Filtro de Faixa de Consumo (5.0 a 23.0 km/L) e Tanque Cheio:</strong> Evita que a sua média seja distorcida por dados irrealistas ou parciais. Abastecimentos parciais pequenos podem gerar médias irreais (como 2.0 km/L ou 45.0 km/L). O intervalo de 5.0 a 23.0 km/L atua como margem de segurança: qualquer registro fora dessa faixa é sinalizado como outlier (desconsiderado) para não quebrar a precisão das suas médias gerais nem afetar o cálculo da Decisão no Posto.</li>
+                                <li><strong>Formulário de Cadastro:</strong> Área para registrar a data, odômetro, litros e preços de cada combustível, além do checkbox para indicar se o abastecimento completou o tanque.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <strong class="text-white block">Histórico</strong>
+                            <ul class="list-disc list-inside space-y-1 pl-1">
+                                <li>Exibe a lista completa de abastecimentos cadastrados.</li>
+                                <li><strong>Filtros Rápidos:</strong> Permite filtrar a lista por combustível (Álcool, Gasolina ou Misto).</li>
+                                <li><strong>Busca:</strong> Permite pesquisar registros por data ou quilometragem.</li>
+                                <li><strong>Ações:</strong> Opções para Editar ou Excluir registros salvos.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <strong class="text-white block">Análise</strong>
+                            <ul class="list-disc list-inside space-y-1 pl-1">
+                                <li><strong>Gráfico de Evolução:</strong> Exibe uma linha do tempo com a variação do consumo em km/L.</li>
+                                <li><strong>Gráfico de Distribuição por Combustível:</strong> Gráfico em formato de rosca que visualiza a frequência de uso dos combustíveis no seu veículo (proporção e quantidade de vezes que você abasteceu com Álcool, Gasolina ou Misto). Serve para avaliar visualmente se você está mantendo a estratégia de abastecimento pretendida.</li>
+                                <li><strong>Insight de Economia:</strong> Texto explicativo que consolida o aprendizado do app sobre o seu veículo. Exibe a sua média real com Álcool e Gasolina e informa a eficiência percentual exata do álcool no seu motor (ex: "O rendimento do Álcool representa 78.5% do rendimento da Gasolina").</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <strong class="text-white block">Revisão (Acompanhamento de Manutenção)</strong>
+                            <ul class="list-disc list-inside space-y-1 pl-1">
+                                <li><strong>Controle de Manutenção Preventiva:</strong> Parâmetro prático e simplificado de acompanhamento preventivo, focado na manutenção básica do veículo (como troca de óleo e filtros), que costuma ocorrer a cada 10.000 km.</li>
+                                <li><strong>Previsão Inteligente:</strong> O aplicativo pega a sua quilometragem atual, identifica a próxima meta de revisão em múltiplos de 10.000 km e cruza esse dado com o seu ritmo de uso diário/mensal. Com base nisso, ele projeta a data estimada em que você atingirá a marca de manutenção.</li>
+                                <li><strong>Barra de Progresso:</strong> Indica visualmente a porcentagem percorrida dentro do intervalo atual de revisão.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <h4 class="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-gear"></i> 4. Configurações e Gerenciamento de Dados
+                    </h4>
+                    <p>Acessado pelo ícone de engrenagem no cabeçalho superior:</p>
+                    <ul class="list-disc list-inside space-y-1 pl-1 text-slate-300">
+                        <li><strong>Exportar / Restaurar JSON:</strong> Permite gerar um arquivo de backup com todos os dados salvos ou restaurar informações em um novo dispositivo.</li>
+                        <li><strong>Exportar Excel:</strong> Gera uma planilha detalhada com todos os dados formatados (quilometragens, valores gastos, consumo individual e custo por km).</li>
+                        <li><strong>Exportar PDF:</strong> Gera um relatório resumido e formatado para impressão ou envio.</li>
+                        <li><strong>Zerar Banco:</strong> Apaga todo o histórico local do aplicativo para iniciar um novo controle do zero.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800">
+                <button onclick="closeManualModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition text-xs">
+                    Fechar Manual
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE UPGRADE PRO -->
     <div id="proModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-slate-900 border border-amber-500/40 w-full max-w-sm rounded-3xl p-6 shadow-2xl relative text-center space-y-4">
@@ -545,6 +663,22 @@
                 dropdown.classList.add('hidden');
             }
         });
+
+        function openManualModal() {
+            const modal = document.getElementById('manualModal');
+            if (modal) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+            }
+        }
+
+        function closeManualModal() {
+            const modal = document.getElementById('manualModal');
+            if (modal) {
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
 
         function openProModal() {
             const modal = document.getElementById('proModal');
