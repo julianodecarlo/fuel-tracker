@@ -484,7 +484,7 @@
                     <p>Localizada no painel principal, esta ferramenta calcula instantaneamente qual combustível oferece maior vantagem financeira para o seu momento de abastecimento.</p>
                     <ul class="list-disc list-inside space-y-1 pl-1 text-slate-300">
                         <li><strong>Na prática:</strong> Ao encostar o carro no posto, abra a aba Resumo e digite nos campos indicados o preço atual do litro do Álcool e da Gasolina.</li>
-                        <li><strong>Ajuste Inteligente (Perfil do Usuário):</strong> Diferente de calculadoras comuns que usam uma proporção genérica de 70%, o aplicativo calcula a eficiência real do seu motor. Ele compara a média que o seu veículo faz com álcool contra a média com gasolina. Conforme você registra abastecimentos com tanque cheio, o app recalcula essa proporção e ajusta o "Fator" dinamicamente. Quanto mais você usa o aplicativo, mais precisa e personalizada fica a indicação.</li>
+                        <li><strong>Ajuste Inteligente (Perfil do Usuário):</strong> O aplicativo parte do fator padrão inicial de 70% e passa a calcular a eficiência real do seu motor conforme você abastece com os dois combustíveis. Ele compara a média que o seu veículo faz com álcool contra a média com gasolina (quando houver registros com ambos os combustíveis). Conforme você registra abastecimentos com tanque cheio, o app recalcula essa proporção e ajusta o "Fator" dinamicamente. Quanto mais você usa o aplicativo, mais precisa e personalizada fica a indicação.</li>
                         <li><strong>O Resultado:</strong> O sistema exibe na hora qual opção é mais vantajosa e indica o preço limite recomendado para o álcool (ex: "Álcool vale a pena até R$ 3,85").</li>
                     </ul>
                 </div>
@@ -522,7 +522,7 @@
                             <ul class="list-disc list-inside space-y-1 pl-1">
                                 <li><strong>Gráfico de Evolução:</strong> Exibe uma linha do tempo com a variação do consumo em km/L.</li>
                                 <li><strong>Gráfico de Distribuição por Combustível:</strong> Gráfico em formato de rosca que visualiza a frequência de uso dos combustíveis no seu veículo (proporção e quantidade de vezes que você abasteceu com Álcool, Gasolina ou Misto). Serve para avaliar visualmente se você está mantendo a estratégia de abastecimento pretendida.</li>
-                                <li><strong>Insight de Economia:</strong> Texto explicativo que consolida o aprendizado do app sobre o seu veículo. Exibe a sua média real com Álcool e Gasolina e informa a eficiência percentual exata do álcool no seu motor (ex: "O rendimento do Álcool representa 78.5% do rendimento da Gasolina").</li>
+                                <li><strong>Insight de Economia:</strong> Texto explicativo que consolida o aprendizado do app sobre o seu veículo. Exibe a sua média real com Álcool e Gasolina e informa a eficiência percentual exata do álcool no seu motor (ex: "O rendimento do Álcool representa 70.0% do rendimento da Gasolina").</li>
                             </ul>
                         </div>
 
@@ -704,8 +704,12 @@
             const validA = records.filter(r => r.full && r.comb === 'A' && r.kml >= KML_MIN && r.kml <= KML_MAX);
             const validG = records.filter(r => r.full && r.comb === 'G' && r.kml >= KML_MIN && r.kml <= KML_MAX);
 
-            const avgKmlA = validA.length ? (validA.reduce((a, b) => a + b.kml, 0) / validA.length) : 8.61;
-            const avgKmlG = validG.length ? (validG.reduce((a, b) => a + b.kml, 0) / validG.length) : 10.02;
+            if (!validA.length || !validG.length) {
+                return 0.70; // Fator padrão inicial de 70% caso não existam abastecimentos com ambos os combustíveis
+            }
+
+            const avgKmlA = validA.reduce((a, b) => a + b.kml, 0) / validA.length;
+            const avgKmlG = validG.reduce((a, b) => a + b.kml, 0) / validG.length;
 
             return avgKmlA / avgKmlG;
         }
@@ -1343,10 +1347,11 @@
             const validA = records.filter(r => r.full && r.comb === 'A' && r.kml >= KML_MIN && r.kml <= KML_MAX);
             const validG = records.filter(r => r.full && r.comb === 'G' && r.kml >= KML_MIN && r.kml <= KML_MAX);
 
-            const avgKmlA = validA.length ? (validA.reduce((a, b) => a + b.kml, 0) / validA.length) : 8.61;
-            const avgKmlG = validG.length ? (validG.reduce((a, b) => a + b.kml, 0) / validG.length) : 10.02;
+            const avgKmlA = validA.length ? (validA.reduce((a, b) => a + b.kml, 0) / validA.length) : 0;
+            const avgKmlG = validG.length ? (validG.reduce((a, b) => a + b.kml, 0) / validG.length) : 0;
 
-            const ratio = (avgKmlA / avgKmlG) * 100;
+            const fator = getFatorRendimentoDinamico();
+            const ratio = fator * 100;
 
             const insightEl = document.getElementById('insightText');
             if (insightEl) {
@@ -1355,7 +1360,7 @@
                     return;
                 }
                 insightEl.innerHTML = `
-                    Sua média válida com <strong class="text-emerald-400">Álcool</strong> é de <strong>${avgKmlA.toFixed(2)} km/L</strong> e com <strong class="text-amber-400">Gasolina</strong> é de <strong>${avgKmlG.toFixed(2)} km/L</strong>.<br><br>
+                    Sua média válida com <strong class="text-emerald-400">Álcool</strong> é de <strong>${avgKmlA ? avgKmlA.toFixed(2) + ' km/L' : 'Sem dados suficientes'}</strong> e com <strong class="text-amber-400">Gasolina</strong> é de <strong>${avgKmlG ? avgKmlG.toFixed(2) + ' km/L' : 'Sem dados suficientes'}</strong>.<br><br>
                     O rendimento do Álcool no seu veículo representa <strong>${ratio.toFixed(1)}%</strong> do rendimento da Gasolina. Recomendamos abastecer com Álcool sempre que o preço do litro for inferior a <strong>${ratio.toFixed(1)}%</strong> do preço da gasolina na sua região!
                 `;
             }
